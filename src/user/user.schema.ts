@@ -20,6 +20,13 @@ export class User {
 
 export const UserSchema = SchemaFactory.createForClass(User);
 
+export interface UserInterface {
+    name: string;
+    id: string;
+    role: UserRole;
+    password: string;
+}
+
 export enum UserRole {
     ADMIN = 'ADMIN',
     OWNER = 'OWNER',

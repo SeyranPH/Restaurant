@@ -17,7 +17,20 @@ export class UserService {
     return createdUser.save();
   }
 
+  async findById(userId): Promise<User> {
+    return await this.UserModel.findOne({id: userId});
+  }
+
   async findAll(): Promise<User[]> {
     return this.UserModel.find().exec();
+  }
+
+  async update(userId, fieldsToUpdate): Promise<User> {
+    return await this.UserModel.findOneAndUpdate({id: userId}, fieldsToUpdate);
+  }
+
+  async delete(userId): Promise<void> {
+    await this.UserModel.findOneAndDelete({id: userId});
+    return;
   }
 }
