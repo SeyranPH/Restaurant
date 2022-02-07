@@ -22,7 +22,7 @@ export class UserController {
 
     @Post()
     createUser(@Body() creatUserDto: CreateUserDto): Promise<UserInterface> {
-        return this.UserService.create(creatUserDto);
+        return this.UserService.signup(creatUserDto);
     }
     
     @Patch('/:id')

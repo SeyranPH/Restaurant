@@ -1,34 +1,64 @@
-import { Prop, Schema, SchemaFactory } from '@nestjs/mongoose';
-import { Document } from 'mongoose';
+import { Document, Schema, model } from 'mongoose';
 
-export type UserDocument = User & Document;
+const UserSchema: Schema = new Schema({
+    name: {
+        type: String,
+        required: true
+    },
+    id: {
+        type: String,
+        required: true
+    },
+    email: {
+        type: String,
+        required: true
+    },
+    emailConfirmed: {
+        type: String,
+        required: true,
+        default: false
+    },
+    role: {
+        type: String,
+        enum: ["CLIENT", "OWNER"],
+        default: "CLIENT",
+        required: true
+    },
+    password: {
+        type: String,
+        required: true
+    },
+    accessToken: {
+        type: String,
+        required: false
+    },
+    emailConfirmationToken: {
+        type: String,
+        required: false
+    },
+    resetPasswordToken: {
+        type: String,
+        required: false
+    }
+},
+{ timestamps: true },
+);
 
-@Schema()
-export class User {
-    @Prop({required: true})
-    name: string;
-
-    @Prop()
-    id: string;
-
-    @Prop({required: true})
-    role: UserRole;
-
-    @Prop({required: true})
-    password: string;
-}
-
-export const UserSchema = SchemaFactory.createForClass(User);
+export const User = model('User', UserSchema);
 
 export interface UserInterface {
     name: string;
+    email: string;
+    emailConfirmed?: boolean
     id: string;
     role: UserRole;
-    password: string;
+    password?: string;
+    accessToken?: string;
+    emailConfirmationToken?: string;
+    resetPasswordToken?: string;
 }
 
 export enum UserRole {
-    ADMIN = 'ADMIN',
     OWNER = 'OWNER',
-    REGULAR = 'REGULAR'
+    CLIENT = 'CLIENT'
 }

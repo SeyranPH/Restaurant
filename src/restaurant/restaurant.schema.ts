@@ -1,36 +1,37 @@
-import { Prop, Schema, SchemaFactory } from '@nestjs/mongoose';
-import { Document } from 'mongoose';
+import { Schema, model } from 'mongoose';
+import { UserInterface, User } from 'src/user/user.schema';
 
-import { User } from 'src/user/user.schema';
+const RestaurantSchema: Schema = new Schema(
+    {
+      onwerId: {
+        type: Schema.Types.ObjectId,
+        ref: User,
+      },
+      name: {
+        type: String,
+        required: true,
+      },
+      description: {
+        type: String,
+        required: true
+      },
+      image: {
+          type: String,
+          required: true
+      },
+      location: {
+          type: String,
+          required: true
+      }
+    },
+    { timestamps: true },
+  );
 
-export type RestaurantDocument = Restaurant & Document;
-
-@Schema()
-export class Restaurant {
-    @Prop()
-    id: string;
-
-    @Prop()
-    ownerId: string | User;
-
-    @Prop({required: true})
-    name: string;
-
-    @Prop({required: true})
-    description: string;
-
-    @Prop()
-    image: string;
-
-    @Prop()
-    location: string;
-}
-
-export const RestaurantSchema = SchemaFactory.createForClass(Restaurant);
+export const Restaurant = model('Restaurant', RestaurantSchema);
 
 export interface RestaurantInterface {
     id: string;
-    ownerId: string | User;
+    ownerId: string | UserInterface;
     name: string;
     description: string;
     image: string;
