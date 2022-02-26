@@ -1,12 +1,12 @@
 version: '2'
 services:
   dev:
-    container_name: nestjs_api
+    container_name: backend
     build:
       context: .
       dockerfile: ./Dockerfile
     ports:
-      - 8000:8000
+      - 3456:3456
     networks:
       - nesjs-network
     depends_on:

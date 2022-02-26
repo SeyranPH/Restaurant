@@ -10,6 +10,6 @@ RUN npm install --only=development
 
 COPY . .
 
-EXPOSE 8000
+EXPOSE 3456
 
 CMD ["npm", "start"]

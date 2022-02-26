@@ -2,7 +2,7 @@ const express = require('express');
 const bodyParser = require('body-parser');
 const router = require('./controller');
 const mongoose = require('mongoose');
-const ErrorHandler = require ("./middleware/ErrorHandler");
+const {ErrorHandler} = require ("./middleware/ErrorHandler");
 
 
 let app = express();

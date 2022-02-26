@@ -1,4 +1,4 @@
-const config = require('../config');
+const config = require('../../config');
 const sgMail = require("@sendgrid/mail");
 
 const {sgApiKey, emailConfirmationTemplateId, senderEmail, senderName, baseUrl}  = config;
