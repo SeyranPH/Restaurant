@@ -6,7 +6,7 @@
   "private": true,
   "license": "UNLICENSED",
   "scripts": {
-    "start": "NODE_ENV=local nest start",
+    "start": "NODE_ENV=local node ./src/app.js",
     "prepare": "husky install"
   },
   "dependencies": {
@@ -14,6 +14,7 @@
     "bcrypt": "^5.0.1",
     "dotenv": "^16.0.0",
     "express": "^4.17.3",
+    "joi": "^17.6.0",
     "jsonwebtoken": "^8.5.1",
     "mongoose": "^6.1.10"
   },
