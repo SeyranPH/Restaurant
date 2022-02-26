@@ -1,10 +1,3 @@
-const User = require('../model/user');
-const {
-  NotFound,
-  Unauthorized,
-  Forbidden,
-} = require('../middleware/errorHandler');
-
 const getRestaurantData = async () => {
   return Promise.resolve({});
 };
