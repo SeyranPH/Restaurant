@@ -6,7 +6,8 @@
   "private": true,
   "license": "UNLICENSED",
   "scripts": {
-    "start": "NODE_ENV=local nest start"
+    "start": "NODE_ENV=local nest start",
+    "prepare": "husky install"
   },
   "dependencies": {
     "@sendgrid/mail": "^7.6.0",
@@ -17,6 +18,11 @@
     "mongoose": "^6.1.10"
   },
   "devDependencies": {
+    "husky": "^7.0.4",
+    "lint-staged": "^12.3.4",
     "prettier": "^2.2.1"
+  },
+  "lint-staged": {
+    "*.{js,jsx}": "prettier --write"
   }
 }
