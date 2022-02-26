@@ -1,7 +1,13 @@
 const config = require('../../config');
-const sgMail = require("@sendgrid/mail");
+const sgMail = require('@sendgrid/mail');
 
-const {sgApiKey, emailConfirmationTemplateId, senderEmail, senderName, baseUrl}  = config;
+const {
+  sgApiKey,
+  emailConfirmationTemplateId,
+  senderEmail,
+  senderName,
+  baseUrl,
+} = config;
 
 sgMail.setApiKey(sgApiKey);
 
@@ -21,4 +27,4 @@ async function sendEmailConfirmation({ to, token }) {
   return result;
 }
 
-module.exports = { sendEmailConfirmation } 
+module.exports = { sendEmailConfirmation };
