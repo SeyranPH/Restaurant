@@ -25,9 +25,10 @@ const deleteRestaurant = async (restaurantId) => {
 };
 
 module.exports = {
-  signup,
-  login,
-  emailConfirmation,
+  getRestaurantData,
+  getRestaurantInfo,
+  getRestaurantDataFilteredByOwner,
+  createRestaurant,
+  updateRestaurantData,
+  deleteRestaurant,
 };
-
-async function userSignup(data) {}
