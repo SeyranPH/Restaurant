@@ -1,7 +1,12 @@
+const Restaurant = require('../model/restaurant');
+
 const getRestaurantData = async () => {
-  return Promise.resolve({});
+  const result = await Restaurant.find({});
+
+  return result;
 };
 const getRestaurantInfo = async (restaurantId) => {
+  const result = await Restaurant.find({});
   return Promise.resolve({});
 };
 const getRestaurantDataFilteredByOwner = async (data) => {
