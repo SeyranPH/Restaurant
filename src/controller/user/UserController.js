@@ -11,6 +11,7 @@ async function signup(req, res, next) {
     UserRequestValidator.validateSignup(req.body);
     const data = req.body;
     const user = await UserService.signup(data);
+    return res.status(201).send(user);
   } catch (error) {
     next(error, req, res, next);
   }
@@ -20,6 +21,7 @@ async function emailConfirmation(req, res, next) {
   try {
     const token = req.params.token;
     await UserService.emailConfirmation(token);
+    return res.sendStatus(200);
   } catch (error) {
     next(error, req, res, next);
   }
@@ -29,6 +31,7 @@ async function login(req, res, next) {
   try {
     const data = req.body;
     const token = await UserService.login(data);
+    return res.status(200).send({token});
   } catch (error) {
     next(error, req, res, next);
   }

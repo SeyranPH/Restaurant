@@ -3,7 +3,7 @@ const bodyParser = require('body-parser');
 const router = require('./controller');
 const mongoose = require('mongoose');
 const {ErrorHandler} = require ("./middleware/errorHandler");
-
+const {dbUrl, port} = require("../config");
 
 let app = express();
 
@@ -12,8 +12,8 @@ app.use(bodyParser.json());
 app.use(router);
 app.use(ErrorHandler);
 
-mongoose.connect("mongodb://localhost:27018/restaurant");
+mongoose.connect(dbUrl);
 
-const port = process.env.PORT || 3456;
+const serverPort = port || 3456;
 
-app.listen(port, () => console.log(`listening on port ${port}`));
+app.listen(port, () => console.log(`listening on port ${serverPort}`));

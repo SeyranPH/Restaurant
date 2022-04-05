@@ -5,7 +5,8 @@ function validateEmailConfirmation(params) {
   const schema = Joi.object({
     token: Joi.string().required(),
   });
-  if (!schema.validate(params)) {
+  const result = schema.validate(input)
+  if (result.error){
     throw new BadRequest(result.error);
   }
   return;
@@ -21,7 +22,8 @@ function validateLogin(input) {
       .email({ minDomainSegments: 2, tlds: { allow: ['com', 'net'] } })
       .required(),
   });
-  if (!schema.validate(input)) {
+  const result = schema.validate(input)
+  if (result.error){
     throw new BadRequest(result.error);
   }
   return;
@@ -32,13 +34,14 @@ function validateSignup(input) {
     password: Joi.string()
       .pattern(new RegExp('^[a-zA-Z0-9]{3,30}$'))
       .required(),
-
+    name: Joi.string().required(),
     email: Joi.string()
       .email({ minDomainSegments: 2, tlds: { allow: ['com', 'net'] } })
       .required(),
-    role: Joi.string().valid('owner', 'regular', 'admin').required(),
+    role: Joi.string().valid('owner', 'regular').required(),
   });
-  if (!schema.validate(input)) {
+  const result = schema.validate(input)
+  if (result.error){
     throw new BadRequest(result.error);
   }
   return;

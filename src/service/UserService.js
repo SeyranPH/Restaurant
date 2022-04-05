@@ -1,32 +1,27 @@
-const User = require('../model/user');
-const {
-  NotFound,
-  Unauthorized,
-  Forbidden,
-} = require('../middleware/errorHandler');
-const { sendEmailConfirmation } = require('./MailingService');
-const config = require('../../config');
-
 const jwt = require('jsonwebtoken');
 
-const { jwtSecret } = config;
+const User = require('../model/user');
+const { NotFound, Unauthorized, Forbidden } = require('../middleware/errorHandler');
+const { sendEmailConfirmation } = require('./MailingService');
+const { jwtSecret } = require('../../config');
 
 async function signup(data) {
   data.emailConfirmed = false;
   const user = await User.create(data);
-
+  const id = user._id;
   const token = jwt.sign(
-    { id: user._id, type: 'email_confirmation' },
+    { id, type: 'email_confirmation' },
     jwtSecret,
     { expiresIn: '3d' }
   );
+
   await User.findOneAndUpdate(
     { _id: user._id },
     { emailConfirmationToken: token }
   );
-  await sendEmailConfirmation(user.email, token);
-  console.log(token);
-  return user;
+  await sendEmailConfirmation({ to: user.email, token });
+  const accessToken = jwt.sign({ id }, jwtSecret, { expiresIn: '3h' });
+  return {accessToken}
 }
 
 async function emailConfirmation(token) {
@@ -44,8 +39,7 @@ async function emailConfirmation(token) {
 async function login(data) {
   const user = await User.findOne(data);
   if (!user) throw new Unauthorized('wrong email or password');
-  if (!user.emailConfirmed === false)
-    throw new Forbidden('please confirm your email');
+
   const { id } = user;
   const token = jwt.sign({ id }, jwtSecret, { expiresIn: '3h' });
   return token;

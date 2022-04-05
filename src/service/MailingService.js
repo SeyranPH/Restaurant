@@ -25,6 +25,7 @@ async function sendEmailConfirmation({ to, token }) {
   };
   const result = await sgMail.send(msg);
   return result;
+
 }
 
 module.exports = { sendEmailConfirmation };
