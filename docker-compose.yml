@@ -8,7 +8,7 @@ services:
     ports:
       - 3456:3456
     networks:
-      - nesjs-network
+      - restaurant-network
     depends_on:
       - mongodb
     # volumes:
@@ -19,14 +19,18 @@ services:
   mongodb:
     image : mongo:latest
     container_name: mongodb
+    environment:
+      - MONGO_INITDB_ROOT_USERNAME=user
+      - MONGO_INITDB_ROOT_PASSWORD=password
+      - MONGO_INITDB_DATABASE=restaurant
     volumes:
       - ./database:/data/db
     ports:
-      - 27018:27018
+      - 27017:27017
     networks:
-      - nesjs-network
+      - restaurant-network
     restart: always
 
 networks:
-    nesjs-network:
+    restaurant-network:
       driver: bridge

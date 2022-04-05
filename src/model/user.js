@@ -12,9 +12,9 @@ const UserSchema = new mongoose.Schema(
       type: String,
       required: true,
     },
-    accessToken: {
+    name: {
       type: String,
-      required: false,
+      required: true,
     },
     emailConfirmed: {
       type: Boolean,
@@ -22,9 +22,11 @@ const UserSchema = new mongoose.Schema(
     },
     emailConfirmationToken: {
       tyoe: String,
+      required: false,
     },
     role: {
       type: String,
+      required: true,
     },
   },
   { timestamps: true }
