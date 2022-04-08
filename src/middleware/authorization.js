@@ -5,7 +5,7 @@ const {Unauthorized}= require("./errorHandler")
 
 const { jwtSecret } = config;
 
-async function verify(req, res, next) {
+async function isVerified(req, res, next) {
     try {
         const bearer = req.headers.authorization
         if (!bearer) {
@@ -13,12 +13,12 @@ async function verify(req, res, next) {
         }
         const token = bearer.split(' ')[1];
 
-        const isVerified = jwt.verify(token, jwtSecret)
+        const verifiedUser = jwt.verify(token, jwtSecret)
 
-        if (!isVerified) {
+        if (!verifiedUser) {
             throw new Unauthorized('Bearer token is not valid');
         }
-        const {id} = isVerified;
+        const {id} = verifiedUser;
         const user = await User.findOne({ _id: id });
         req.user = user;
         next();
@@ -28,4 +28,4 @@ async function verify(req, res, next) {
     }
 }
 //stugel 
-module.exports = verify
+module.exports = isVerified

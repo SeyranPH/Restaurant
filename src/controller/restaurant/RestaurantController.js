@@ -1,13 +1,15 @@
 const router = require('express').Router();
 
-const verify = require('../../middleware/authorization');
+const isVerified = require('../../middleware/authorization');
 const isOwner = require('../../middleware/isOwner');
 const RestaurantService = require('../../service/RestaurantService');
 const RestaurantRequestValidator = require('../../service/RequestValidation/RestaurantRequestValidator');
 
-router.post('/', [verify, isOwner], createRestaurant);
+router.post('/', [isVerified, isOwner], createRestaurant);
 router.get('/', getRestaurants);
 router.get('/:id', getRestaurantById);
+router.put('/:id', [isVerified, isOwner], updateRestaurant);
+router.delete('/:id', [isVerified, isOwner], deleteRestaurant);
 
 async function createRestaurant(req, res, next) {
   try {
@@ -15,7 +17,7 @@ async function createRestaurant(req, res, next) {
     const userId = req.user._id;
     const data = req.body;
     const restaurantId = await RestaurantService.createRestaurant(data, userId);
-    res.send({id: restaurantId});
+    return res.send({id: restaurantId});
   } catch (error) {
     next(error, req, res, next);
   }
@@ -26,7 +28,7 @@ async function getRestaurants(req, res, next) {
     RestaurantRequestValidator.validateGetRestaurants(req.query);
     const {limit, skip} = req.query;
     const restaurantData = await RestaurantService.getRestaurants(limit, skip);
-    res.json(restaurantData);
+    return res.json(restaurantData);
   } catch (error) {
     next(error, req, res, next);
   }
@@ -35,10 +37,27 @@ async function getRestaurants(req, res, next) {
 async function getRestaurantById(req, res, next) {
   try {
     const restaurantId = req.params.id;
-    const restaurantInfo = await RestaurantService.getRestaurantById(
-      restaurantId
-    );
-    res.status(200).send(restaurantInfo);
+    const restaurant = await RestaurantService.getRestaurantById(restaurantId);
+    return res.status(200).send(restaurantInfo);
+  } catch (error) {
+    next(error, req, res, next);
+  }
+}
+
+async function updateRestaurant(req, res, next) {
+  try {
+    RestaurantRequestValidator.validateUpdateRestaurant(req.body);
+    const result = await RestaurantService.updateRestaurant({restaurantId: req.params.id, user: req.user, data: req.body});
+    return res.status(200).send({message: 'Restaurant updated successfully', restaurant: result});
+  } catch (error) {
+    next(error, req, res, next);
+  }
+}
+
+async function deleteRestaurant(req, res, next) {
+  try {
+    await RestaurantService.deleteRestaurant({restaurantId: req.params.id, user: req.user});
+    return res.status(200).send({message: 'Restaurant deleted successfully'});
   } catch (error) {
     next(error, req, res, next);
   }

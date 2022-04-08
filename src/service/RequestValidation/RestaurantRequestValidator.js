@@ -26,7 +26,21 @@ function validateGetRestaurants(input) {
   }
 }
 
+function validateUpdateRestaurant(input) {
+  const schema = Joi.object({
+    name: Joi.string(),
+    description: Joi.string(),
+    location: Joi.string(),
+    image: Joi.string()
+  });
+  const result = schema.validate(input)
+  if (result.error){
+    throw new BadRequest(result.error);
+  }
+}
+
 module.exports = {
   validateCreateRestaurant,
   validateGetRestaurants,
+  validateUpdateRestaurant
 };
