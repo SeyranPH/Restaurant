@@ -23,7 +23,7 @@ const ReviewSchema = new mongoose.Schema(
       required: true,
     },
   },
-  { timestamps: true }
+  { timestamps: true, versionKey: false }
 );
 
 const Review = mongoose.model('Review', ReviewSchema);

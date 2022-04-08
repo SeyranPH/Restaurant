@@ -1,6 +1,8 @@
 const router = require('express').Router();
+const userRouter = require('./user/UserController.js');
+const restaurantRouter = require('./restaurant/RestaurantController.js');
 
-router.use('/user', require('./user/UserController.js'));
-router.use('/restaurant', require('./restaurant/RestaurantController'));
+router.use('/user', userRouter);
+router.use('/restaurant', restaurantRouter);
 
 module.exports = router;

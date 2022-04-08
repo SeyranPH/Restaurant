@@ -36,8 +36,8 @@ class MethodNotAllowed extends HttpError {
 }
 
 class InternalServerError extends HttpError {
-  constructor(message) {
-    super(message, 500);
+  constructor() {
+    super('Internal Server Error', 500);
   }
 }
 

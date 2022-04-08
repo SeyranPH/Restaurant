@@ -1,44 +1,32 @@
 const Joi = require('joi');
 const { BadRequest } = require('../../middleware/errorHandler');
 
-function validateCreateRestaurant(params) {
+function validateCreateRestaurant(input) {
   const schema = Joi.object({
     name: Joi.string().required(),
     description: Joi.string().required(),
     location: Joi.string().required(),
-    creatorUid: Joi.string().required(),
+    image: Joi.string()
   });
-  if (!schema.validate(params)) {
+  const result = schema.validate(input)
+  if (result.error){
     throw new BadRequest(result.error);
   }
   return;
 }
 
-function validateUpdateRestaurantData(params) {
+function validateGetRestaurants(input) {
   const schema = Joi.object({
-    name: Joi.string(),
-    description: Joi.string(),
-    location: Joi.string(),
-    creatorUid: Joi.string(),
+    limit: Joi.number(),
+    skip: Joi.number()
   });
-  if (!schema.validate(params)) {
+  const result = schema.validate(input)
+  if (result.error){
     throw new BadRequest(result.error);
   }
-  return;
-}
-
-function validateGetRestaurantDataFilteredByOwner(params) {
-  const schema = Joi.object({
-    userUid: Joi.string().required(),
-  });
-  if (!schema.validate(params)) {
-    throw new BadRequest(result.error);
-  }
-  return;
 }
 
 module.exports = {
   validateCreateRestaurant,
-  validateUpdateRestaurantData,
-  validateGetRestaurantDataFilteredByOwner,
+  validateGetRestaurants,
 };

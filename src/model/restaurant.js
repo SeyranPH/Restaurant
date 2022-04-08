@@ -2,8 +2,8 @@ const mongoose = require('mongoose');
 
 const RestaurantSchema = new mongoose.Schema(
   {
-    creatorUid: {
-      type: String,
+    ownerId: {
+      type: mongoose.Types.ObjectId,
       required: true,
     },
     name: {
@@ -16,14 +16,19 @@ const RestaurantSchema = new mongoose.Schema(
     },
     image: {
       type: String,
-      required: true,
+      required: false,
     },
     location: {
       type: String,
       required: true,
     },
+    rating: {
+      type: Number,
+      required: true,
+      default: '0',
+    }
   },
-  { timestamps: true }
+  { timestamps: true, versionKey: false }
 );
 
 const Restaurant = mongoose.model('Restaurant', RestaurantSchema);
