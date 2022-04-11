@@ -2,20 +2,16 @@ const mongoose = require('mongoose');
 
 const ReviewSchema = new mongoose.Schema(
   {
-    creatorUid: {
-      type: String,
+    reviewer: {
+      type: mongoose.Types.ObjectId,
+      required: true,
+    },
+    restaurant: {
+      type: mongoose.Types.ObjectId,
       required: true,
     },
     comment: {
       type: String,
-      required: true,
-    },
-    dateOfCreation: {
-      type: Number,
-      required: true,
-    },
-    dateTimestamp: {
-      type: Number,
       required: true,
     },
     score: {

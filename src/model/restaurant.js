@@ -2,7 +2,7 @@ const mongoose = require('mongoose');
 
 const RestaurantSchema = new mongoose.Schema(
   {
-    ownerId: {
+    owner: {
       type: mongoose.Types.ObjectId,
       required: true,
     },

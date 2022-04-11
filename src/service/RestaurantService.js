@@ -2,7 +2,7 @@ const { Forbidden, NotFound } = require('../middleware/errorHandler');
 const Restaurant = require('../model/restaurant');
 
 const createRestaurant = async (data, userId) => {
-  const restaurantData = Object.assign(data, {ownerId: userId});
+  const restaurantData = Object.assign(data, {owner: userId});
   const restaurant = await Restaurant.create(restaurantData);
   return restaurant._id;
 };
@@ -63,7 +63,7 @@ const updateRestaurant = async ({restaurantId, user, data}) => {
 
 const deleteRestaurant = async ({restaurantId, user}) => {
   if (user && user.role.toLowerCase === 'owner') {
-    const result = await Restaurant.findOneAndDelete({_id: restaurantId, ownerId: user._id});
+    const result = await Restaurant.findOneAndDelete({_id: restaurantId, owner: user._id});
     if (!result) {
       throw new Forbidden('The user doesn\'t own restaurant with this id');
     }

@@ -1,9 +1,9 @@
 const router = require('express').Router();
 
-const isVerified = require('../../middleware/authorization');
-const isOwner = require('../../middleware/isOwner');
-const RestaurantService = require('../../service/RestaurantService');
-const RestaurantRequestValidator = require('../../service/RequestValidation/RestaurantRequestValidator');
+const isVerified = require('../middleware/authorization');
+const isOwner = require('../middleware/isOwner');
+const RestaurantService = require('../service/RestaurantService');
+const RestaurantRequestValidator = require('../service/RequestValidation/RestaurantRequestValidator');
 
 router.post('/', [isVerified, isOwner], createRestaurant);
 router.get('/', getRestaurants);
