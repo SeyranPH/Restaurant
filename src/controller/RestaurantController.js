@@ -38,7 +38,7 @@ async function getRestaurantById(req, res, next) {
   try {
     const restaurantId = req.params.id;
     const restaurant = await RestaurantService.getRestaurantById(restaurantId);
-    return res.status(200).send(restaurantInfo);
+    return res.status(200).send(restaurant);
   } catch (error) {
     next(error, req, res, next);
   }

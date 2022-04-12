@@ -30,6 +30,9 @@ async function createReview(data, userId) {
   }
   const reviewData = Object.assign(data, { reviewer: userId });
   const review = await Review.create(reviewData);
+  await Restaurant.findByIdAndUpdate(data.restaurant, {
+    $push: { reviews: review._id },
+  });
   return {id: review._id, comment: review.comment, score: review.score};
 }
 

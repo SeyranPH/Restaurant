@@ -1,5 +1,6 @@
 const { Forbidden, NotFound } = require('../middleware/errorHandler');
 const Restaurant = require('../model/restaurant');
+const Review = require('../model/Review');
 
 const createRestaurant = async (data, userId) => {
   const restaurantData = Object.assign(data, {owner: userId});
@@ -11,14 +12,15 @@ const getRestaurants = async (limit, skip) => {
   const query = [
     {
       $sort: {
-        rating: -1,
+        popularity: -1,
+        rating: -1
       }
     },
     {
       $project: {
         createdAt: 0,
         updatedAt: 0,
-        rating: 0,
+        popularity: 0,
         __v: 0
       },
     }
@@ -41,7 +43,7 @@ const getRestaurants = async (limit, skip) => {
 };
 
 const getRestaurantById = async (restaurantId) => {
-  const result = await Restaurant.findOneAndUpdate({_id: restaurantId}, {$inc: {rating: 1}}, {new: true});
+  const result = await Restaurant.findOneAndUpdate({_id: restaurantId}, {$inc: {popularity: 1}}, {new: true}).populate('reviews');
   if (!result) {
     throw new NotFound('Restaurant not found');
   }
@@ -69,7 +71,9 @@ const deleteRestaurant = async ({restaurantId, user}) => {
     }
     return;
   }
-  await Restaurant.findOneAndDelete({_id: restaurantId});
+  const restaurant = await Restaurant.findOneAndDelete({_id: restaurantId});
+  const reviews = restaurant.reviews;
+  await Review.deleteMany({_id: {$in: reviews}});
   return;
 };
 

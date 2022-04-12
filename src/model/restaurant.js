@@ -22,13 +22,23 @@ const RestaurantSchema = new mongoose.Schema(
       type: String,
       required: true,
     },
-    rating: {
+    popularity: {
       type: Number,
       required: true,
       default: '0',
-    }
+    },
+    reviews: {
+      type: [{
+        type: mongoose.Types.ObjectId,
+        ref: 'Review',
+      }],
+      default: []
+    },
   },
-  { timestamps: true, versionKey: false }
+  {
+    timestamps: true,
+    versionKey: false,
+  }
 );
 
 const Restaurant = mongoose.model('Restaurant', RestaurantSchema);

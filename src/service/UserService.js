@@ -1,9 +1,12 @@
 const jwt = require('jsonwebtoken');
 
 const User = require('../model/user');
-const { NotFound, Unauthorized, Forbidden } = require('../middleware/errorHandler');
+const Restaurant = require('../model/restaurant');
+const Review = require('../model/Review');
+const { NotFound, Unauthorized, Forbidden, InternalServerError } = require('../middleware/errorHandler');
 const { sendEmailConfirmation } = require('./MailingService');
 const { jwtSecret } = require('../../config');
+const { startSession } = require('mongoose')
 
 async function signup(data) {
   data.emailConfirmed = false;
@@ -45,10 +48,43 @@ async function login(data) {
   return token;
 }
 
+async function deleteAccount(userId){
+  console.log('Starting acoount removal')
+  const user = await User.findById(userId);
+  if (!user) throw new NotFound('user not found');
+  
+  const session = await startSession()
+  try {
+    session.startTransaction();
+    console.log('Starting removal of associated restaurants');
+    const restaurants = await Restaurant.find({ owner: userId }, null, {session});
+    if (restaurants.length > 0) {
+      await Restaurant.deleteMany({ owner: userId }, {session});
+    }
+    console.log('Starting removal of associated reviews');
+    const reviews = await Review.find({ reviewer: userId }, null, {session});
+    if (reviews.length > 0) {
+      await Review.deleteMany({ reviewer: userId }, {session});
+    }
+    console.log('Removing account');
+    await User.findByIdAndDelete(userId, {session});
+    await session.commitTransaction();
+    session.endSession();
+    console.log('Succesfully removed the account');
+    return;
+} catch (err) {
+  console.log('Transaction failed, reverting changes');
+  await session.abortTransaction();
+  session.endSession();
+  console.log(err.message)
+  throw new InternalServerError('Session failed');
+}
+}
+
 module.exports = {
   signup,
   login,
   emailConfirmation,
+  deleteAccount
 };
 
-async function userSignup(data) {}
