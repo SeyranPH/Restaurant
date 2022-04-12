@@ -18,6 +18,20 @@ const ReviewSchema = new mongoose.Schema(
       type: Number,
       required: true,
     },
+    reply: {
+      comment: {
+        type: String,
+        required: true,
+      },
+      createdAt: {
+        type: Date,
+        required: true,
+      },
+      updatedAt: {
+        type: Date,
+        required: true,
+      },
+    }
   },
   { timestamps: true, versionKey: false }
 );

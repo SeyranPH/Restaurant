@@ -6,7 +6,7 @@ const Review = require('../model/Review');
 const { NotFound, Unauthorized, Forbidden, InternalServerError } = require('../middleware/errorHandler');
 const { sendEmailConfirmation } = require('./MailingService');
 const { jwtSecret } = require('../../config');
-const { startSession } = require('mongoose')
+const { startSession } = require('mongoose');
 
 async function signup(data) {
   data.emailConfirmed = false;
@@ -72,7 +72,7 @@ async function deleteAccount(userId){
     session.endSession();
     console.log('Succesfully removed the account');
     return;
-} catch (err) {
+  } catch (err) {
   console.log('Transaction failed, reverting changes');
   await session.abortTransaction();
   session.endSession();

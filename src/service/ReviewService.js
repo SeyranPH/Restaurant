@@ -58,8 +58,57 @@ async function deleteReview(reviewId, userId) {
   return;
 }
 
+async function createReply(reviewId, userId, {comment}){
+  const review = await Review.findById(reviewId);
+  if (!review) {
+    throw new NotFound('Review not found');
+  }
+
+  if (review.reviewer.toString() !== userId.toString()) {
+    throw new Forbidden('You are not allowed to reply your own review');
+  }
+
+  const restaurant = await Restaurant.findById(review.restaurant);
+  if (restaurant.owner.toString() === userId.toString()) {
+    throw new Forbidden('Only restaurant owner can reply to its reviews');
+  }
+
+  const result = await Review.findByIdAndUpdate({_id: reviewId}, {review: {comment, createdAt: new Date.now(), updatedAt: new Date.now()}}, {new: true});
+  return result;
+}
+
+async function updateReply(reviewId, userId, {comment}){
+  const review = await Review.findById(reviewId);
+  if (!review) {
+    throw new NotFound('Review not found');
+  }
+  
+  if(review.reviewer.toString() !== userId.toString()){
+    throw new Forbidden('You are not allowed to update this review');
+  }
+
+  const result = await Review.findByIdAndUpdate({_id: reviewId}, {review: {comment, updatedAt: new Date.now()}}, {new: true});
+  return result;
+}
+
+async function deleteReply(reviewId, userId) {
+  const review = await Review.findById(reviewId);
+  if (!review) {
+    throw new NotFound('Review not found');
+  }
+
+  if(review.reviewer.toString() !== userId.toString()){
+    throw new Forbidden('You are not allowed to delete this review');
+  }
+
+  await Review.findOneAndDelete({_id: reviewId});
+  return;
+}
+
 module.exports = {
   createReview,
   updateReview,
   deleteReview,
+  createReply,
+  updateReply
 };

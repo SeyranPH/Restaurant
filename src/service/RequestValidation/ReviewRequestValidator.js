@@ -25,7 +25,29 @@ function validateUpdateReview(input) {
   }
 }
 
+function validateCreateReply(input) {
+  const schema = Joi.object({
+    comment: Joi.string().disallow('').required(),
+  });
+  const result = schema.validate(input);
+  if (result.error) {
+    throw new BadRequest(result.error);
+  }
+}
+
+function validateUpdateReply(input) {
+  const schema = Joi.object({
+    comment: Joi.string().disallow('').required(),
+  });
+  const result = schema.validate(input);
+  if (result.error) {
+    throw new BadRequest(result.error);
+  }
+}
+
 module.exports = {
   validateCreateReview,
   validateUpdateReview,
+  validateCreateReply,
+  validateUpdateReply
 };

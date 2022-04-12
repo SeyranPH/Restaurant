@@ -1,6 +1,7 @@
 const { Forbidden, NotFound } = require('../middleware/errorHandler');
 const Restaurant = require('../model/restaurant');
 const Review = require('../model/Review');
+const { startSession } = require('mongoose');
 
 const createRestaurant = async (data, userId) => {
   const restaurantData = Object.assign(data, {owner: userId});
@@ -64,17 +65,32 @@ const updateRestaurant = async ({restaurantId, user, data}) => {
 
 
 const deleteRestaurant = async ({restaurantId, user}) => {
-  if (user && user.role.toLowerCase === 'owner') {
-    const result = await Restaurant.findOneAndDelete({_id: restaurantId, owner: user._id});
-    if (!result) {
-      throw new Forbidden('The user doesn\'t own restaurant with this id');
-    }
-    return;
+  if (user.role.toLowerCase() !== 'owner') {
+    throw new Forbidden('The user doesn\'t own restaurant with this id');
   }
-  const restaurant = await Restaurant.findOneAndDelete({_id: restaurantId});
-  const reviews = restaurant.reviews;
-  await Review.deleteMany({_id: {$in: reviews}});
-  return;
+  try {
+    session.startTransaction();
+
+    const restaurant = await Restaurant.findOneAndDelete({_id: restaurantId, owner: user._id}, {session});
+    if (!restaurant) {
+      throw new NotFound('The user doesn\'t own restaurant with this id');
+    }
+    console.log('Succesfully removed the restaurant');
+
+    const reviews = restaurant.reviews;
+    await Review.deleteMany({_id: {$in: reviews}});
+    console.log('Succesfully removed associated reviews');
+
+    await session.commitTransaction();
+    session.endSession();
+    return;
+  } catch (err) {
+    console.log('Transaction failed, reverting changes');
+    await session.abortTransaction();
+    session.endSession();
+    console.log(err.message)
+    throw new InternalServerError('Session failed');
+  }
 };
 
 module.exports = {
