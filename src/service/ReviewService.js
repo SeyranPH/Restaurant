@@ -79,6 +79,7 @@ async function deleteReview(reviewId, userId) {
     throw new Forbidden('You are not allowed to delete this review');
   }    
   await Review.findByIdAndDelete(reviewId);
+  await updateRestaurantScore(review.restaurant);
   return;
 }
 
@@ -134,5 +135,6 @@ module.exports = {
   updateReview,
   deleteReview,
   createReply,
-  updateReply
+  updateReply,
+  deleteReply
 };

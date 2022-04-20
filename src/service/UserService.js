@@ -13,20 +13,19 @@ const { sendEmailConfirmation } = require('./MailingService');
 const { jwtSecret } = require('../../config');
 const { startSession } = require('mongoose');
 
+async function createUser(data){
+  Object.assign(data, {
+    emailConfirmed: true,
+  })
+  const user = await User.create(data);
+  return user;
+}
+
 async function signup(data) {
   data.emailConfirmed = false;
   const user = await User.create(data);
-  const id = user._id;
-  const token = jwt.sign({ id, type: 'email_confirmation' }, jwtSecret, {
-    expiresIn: '3d',
-  });
-
-  await User.findOneAndUpdate(
-    { _id: user._id },
-    { emailConfirmationToken: token }
-  );
-  await sendEmailConfirmation({ to: user.email, token });
-  const accessToken = jwt.sign({ id }, jwtSecret, { expiresIn: '3h' });
+  await sendEmailConfirmation(user);
+  const accessToken = jwt.sign({ id: user.id }, jwtSecret, { expiresIn: '3h' });
   return { accessToken };
 }
 
@@ -39,6 +38,18 @@ async function emailConfirmation(token) {
     { emailConfirmed: true, emailConfirmationToken: null }
   );
   if (!user) throw new NotFound('user not found');
+  return;
+}
+
+async function sendEmailConfirmation(user){
+  const newToken = jwt.sign({ id, type: 'email_confirmation' }, jwtSecret, {
+    expiresIn: '3d',
+  });
+  await sendEmailConfirmation({ to: user.email, token: newToken });
+  await User.findOneAndUpdate(
+    { _id: user._id },
+    { emailConfirmationToken: newToken, emailConfirmed: false }
+  );
   return;
 }
 
@@ -57,14 +68,7 @@ async function resendConfirmationEmail(user) {
     });
     return;
   }
-  const newToken = jwt.sign({ id, type: 'email_confirmation' }, jwtSecret, {
-    expiresIn: '3d',
-  });
-  await sendEmailConfirmation({ to: user.email, token: newToken });
-  await User.findOneAndUpdate(
-    { _id: user._id },
-    { emailConfirmationToken: newToken }
-  );
+  await sendEmailConfirmation(user)
   return;
 }
 
@@ -75,6 +79,19 @@ async function login(data) {
   const { id } = user;
   const token = jwt.sign({ id }, jwtSecret, { expiresIn: '3h' });
   return token;
+}
+
+async function updateUser(data, userId){
+  const user = await User.findById(userId);
+  if(!user) {
+    throw new NotFound('user not found');
+  }
+
+  if (data.email) {
+    await sendEmailConfirmation({...user, email: data.email});
+  }
+  await User.findByIdAndUpdate(userId, data);
+  return user;
 }
 
 async function deleteAccount(userId) {
@@ -113,9 +130,11 @@ async function deleteAccount(userId) {
 }
 
 module.exports = {
+  createUser,
   signup,
   login,
   emailConfirmation,
   resendConfirmationEmail,
+  updateUser,
   deleteAccount,
 };

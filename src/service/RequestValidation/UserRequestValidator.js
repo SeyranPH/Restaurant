@@ -47,8 +47,45 @@ function validateSignup(input) {
   return;
 }
 
+function validateUpdateUser(input) {
+  const schema = Joi.object({
+    name: Joi.string(),
+    email: Joi.string()
+      .email({ minDomainSegments: 2, tlds: { allow: ['com', 'net'] } }),
+    role: Joi.string().valid('owner', 'regular'),
+    password: Joi.string()
+      .pattern(new RegExp('^[a-zA-Z0-9]{3,30}$'))
+      .required(),
+  });
+  const result = schema.validate(input)
+  if (result.error){
+    throw new BadRequest(result.error);
+  }
+  return;
+}
+
+function validateCreateUser(input){
+  const schema = Joi.object({
+    name: Joi.string().required(),
+    email: Joi.string()
+      .email({ minDomainSegments: 2, tlds: { allow: ['com', 'net'] } })
+      .required(),
+    password: Joi.string()
+      .pattern(new RegExp('^[a-zA-Z0-9]{3,30}$'))
+      .required(),
+    role: Joi.string().valid('owner', 'regular').required(),
+  });
+  const result = schema.validate(input)
+  if (result.error){
+    throw new BadRequest(result.error);
+  }
+  return;
+}
+
+
 module.exports = {
   validateEmailConfirmation,
   validateLogin,
   validateSignup,
+  validateUpdateUser
 };
