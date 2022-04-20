@@ -9,6 +9,25 @@ const {
   Forbidden,
 } = require('../middleware/errorHandler');
 
+async function updateRestaurantScore(restaurantId){
+  const restaurant = await Restaurant.findById(restaurantId);
+  if (!restaurant) {
+    throw new NotFound('Restaurant not found');
+  }
+  const reviews = await Review.find({restaurant: restaurantId});
+  let score = 0;
+  let count = 0;
+  reviews.forEach((review) => {
+    score += review.score;
+    count++;
+  });
+  if(count > 0){
+    score = score / count;
+  }
+  await Restaurant.findByIdAndUpdate(restaurantId, {score});
+  return score;
+}
+
 async function createReview(data, userId) {
   const user = await User.findById(userId);
   if (!user.emailConfirmed) {
@@ -33,6 +52,7 @@ async function createReview(data, userId) {
   await Restaurant.findByIdAndUpdate(data.restaurant, {
     $push: { reviews: review._id },
   });
+  await updateRestaurantScore(data.restaurant);
   return {id: review._id, comment: review.comment, score: review.score};
 }
 
@@ -41,9 +61,13 @@ async function updateReview(reviewId, data) {
   if (!review) {
     throw new NotFound('Review not found');
   }
-  const updateReview = await Review.findByIdAndUpdate(reviewId, data, {
+  const updatedReview = await Review.findByIdAndUpdate(reviewId, data, {
     new: true,
   });
+  if (data.score) {
+    await updateRestaurantScore(review.restaurant);
+  }
+  return updatedReview
 }
 
 async function deleteReview(reviewId, userId) {

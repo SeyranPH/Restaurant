@@ -13,15 +13,13 @@ const getRestaurants = async (limit, skip) => {
   const query = [
     {
       $sort: {
-        popularity: -1,
-        rating: -1
+        score: -1,
       }
     },
     {
       $project: {
         createdAt: 0,
         updatedAt: 0,
-        popularity: 0,
         __v: 0
       },
     }
@@ -44,7 +42,7 @@ const getRestaurants = async (limit, skip) => {
 };
 
 const getRestaurantById = async (restaurantId) => {
-  const result = await Restaurant.findOneAndUpdate({_id: restaurantId}, {$inc: {popularity: 1}}, {new: true}).populate('reviews');
+  const result = await Restaurant.findOne({_id: restaurantId}).populate('reviews');
   if (!result) {
     throw new NotFound('Restaurant not found');
   }

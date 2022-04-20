@@ -6,6 +6,7 @@ const isVerified = require('../middleware/authorization');
 router.post('/signup', signup);
 router.post('/login', login);
 router.get('/email-confirmation/:token', emailConfirmation);
+router.post('/email-confirmation', isVerified, resendConfirmationEmail)
 router.delete('/:id', [isVerified], deleteAccount);
 
 async function signup(req, res, next) {
@@ -23,6 +24,16 @@ async function emailConfirmation(req, res, next) {
   try {
     const token = req.params.token;
     await UserService.emailConfirmation(token);
+    return res.sendStatus(200);
+  } catch (error) {
+    next(error, req, res, next);
+  }
+}
+
+async function resendConfirmationEmail(req, res, next){
+  try {
+    const {user} = req;
+    await UserService.resendConfirmationEmail(user);
     return res.sendStatus(200);
   } catch (error) {
     next(error, req, res, next);

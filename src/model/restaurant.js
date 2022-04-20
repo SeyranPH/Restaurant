@@ -22,10 +22,10 @@ const RestaurantSchema = new mongoose.Schema(
       type: String,
       required: true,
     },
-    popularity: {
+    score: {
       type: Number,
       required: true,
-      default: '0',
+      default: '3',
     },
     reviews: {
       type: [{
