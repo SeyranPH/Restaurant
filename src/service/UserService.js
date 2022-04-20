@@ -82,6 +82,9 @@ async function login(data) {
 }
 
 async function updateUser(data, userId){
+  if (data._id){
+    delete data._id;
+  }
   const user = await User.findById(userId);
   if(!user) {
     throw new NotFound('user not found');

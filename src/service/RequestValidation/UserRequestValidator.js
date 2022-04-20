@@ -56,6 +56,7 @@ function validateUpdateUser(input) {
     password: Joi.string()
       .pattern(new RegExp('^[a-zA-Z0-9]{3,30}$'))
       .required(),
+    _id: Joi.string(),
   });
   const result = schema.validate(input)
   if (result.error){
@@ -84,6 +85,7 @@ function validateCreateUser(input){
 
 
 module.exports = {
+  validateCreateUser,
   validateEmailConfirmation,
   validateLogin,
   validateSignup,

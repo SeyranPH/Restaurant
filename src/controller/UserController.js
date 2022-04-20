@@ -67,8 +67,9 @@ async function login(req, res, next) {
 async function updateUser(req, res, next) {
   try {
     UserRequestValidator.validateUpdateUser(req.body);
-    const userId = req.user._id;
     const data = req.body;
+    const {role} = req.user;
+    const userId = role.toLowerCase() === 'admin' ? data._id : req.user._id;
     const user = await UserService.updateUser(data, userId);
     return res.status(200).send({user});
   } catch (error) {
