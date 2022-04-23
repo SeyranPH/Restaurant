@@ -6,7 +6,7 @@
   "private": true,
   "license": "UNLICENSED",
   "scripts": {
-    "start": "NODE_ENV=local node ./src/app.js",
+    "start": "NODE_ENV=local nodemon ./src/app.js",
     "prepare": "husky install",
     "prettier": "prettier --write src/**/*.js"
   },
@@ -22,6 +22,7 @@
   "devDependencies": {
     "husky": "^7.0.4",
     "lint-staged": "^12.3.4",
+    "nodemon": "^2.0.15",
     "prettier": "^2.2.1"
   },
   "lint-staged": {
