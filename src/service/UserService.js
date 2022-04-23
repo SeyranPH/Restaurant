@@ -9,14 +9,16 @@ const {
   Forbidden,
   InternalServerError,
 } = require('../middleware/errorHandler');
-const { sendEmailConfirmation } = require('./MailingService');
+const {
+  sendEmailConfirmation: sendEmailConfirmationService,
+} = require('./MailingService');
 const { jwtSecret } = require('../../config');
 const { startSession } = require('mongoose');
 
-async function createUser(data){
+async function createUser(data) {
   Object.assign(data, {
     emailConfirmed: true,
-  })
+  });
   const user = await User.create(data);
   return user;
 }
@@ -41,11 +43,11 @@ async function emailConfirmation(token) {
   return;
 }
 
-async function sendEmailConfirmation(user){
+async function sendEmailConfirmation(user) {
   const newToken = jwt.sign({ id, type: 'email_confirmation' }, jwtSecret, {
     expiresIn: '3d',
   });
-  await sendEmailConfirmation({ to: user.email, token: newToken });
+  await sendEmailConfirmationService({ to: user.email, token: newToken });
   await User.findOneAndUpdate(
     { _id: user._id },
     { emailConfirmationToken: newToken, emailConfirmed: false }
@@ -62,13 +64,13 @@ async function resendConfirmationEmail(user) {
   const { exp, iat } = jwt.decode(emailConfirmationToken);
   const threeDays = 3 * 24 * 60 * 60;
   if (exp - iat < threeDays) {
-    await sendEmailConfirmation({
+    await sendEmailConfirmationService({
       to: user.email,
       token: emailConfirmationToken,
     });
     return;
   }
-  await sendEmailConfirmation(user)
+  await sendEmailConfirmation(user);
   return;
 }
 
@@ -81,17 +83,17 @@ async function login(data) {
   return token;
 }
 
-async function updateUser(data, userId){
-  if (data._id){
+async function updateUser(data, userId) {
+  if (data._id) {
     delete data._id;
   }
   const user = await User.findById(userId);
-  if(!user) {
+  if (!user) {
     throw new NotFound('user not found');
   }
 
   if (data.email) {
-    await sendEmailConfirmation({...user, email: data.email});
+    await sendEmailConfirmation({ ...user, email: data.email });
   }
   await User.findByIdAndUpdate(userId, data);
   return user;

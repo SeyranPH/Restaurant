@@ -28,11 +28,13 @@ const RestaurantSchema = new mongoose.Schema(
       default: '3',
     },
     reviews: {
-      type: [{
-        type: mongoose.Types.ObjectId,
-        ref: 'Review',
-      }],
-      default: []
+      type: [
+        {
+          type: mongoose.Types.ObjectId,
+          ref: 'Review',
+        },
+      ],
+      default: [],
     },
   },
   {

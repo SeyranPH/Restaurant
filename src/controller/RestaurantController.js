@@ -17,7 +17,7 @@ async function createRestaurant(req, res, next) {
     const userId = req.user._id;
     const data = req.body;
     const restaurantId = await RestaurantService.createRestaurant(data, userId);
-    return res.send({id: restaurantId});
+    return res.send({ id: restaurantId });
   } catch (error) {
     next(error, req, res, next);
   }
@@ -26,7 +26,7 @@ async function createRestaurant(req, res, next) {
 async function getRestaurants(req, res, next) {
   try {
     RestaurantRequestValidator.validateGetRestaurants(req.query);
-    const {limit, skip} = req.query;
+    const { limit, skip } = req.query;
     const restaurantData = await RestaurantService.getRestaurants(limit, skip);
     return res.json(restaurantData);
   } catch (error) {
@@ -47,8 +47,14 @@ async function getRestaurantById(req, res, next) {
 async function updateRestaurant(req, res, next) {
   try {
     RestaurantRequestValidator.validateUpdateRestaurant(req.body);
-    const result = await RestaurantService.updateRestaurant({restaurantId: req.params.id, user: req.user, data: req.body});
-    return res.status(200).send({message: 'Restaurant updated successfully', restaurant: result});
+    const result = await RestaurantService.updateRestaurant({
+      restaurantId: req.params.id,
+      user: req.user,
+      data: req.body,
+    });
+    return res
+      .status(200)
+      .send({ message: 'Restaurant updated successfully', restaurant: result });
   } catch (error) {
     next(error, req, res, next);
   }
@@ -56,8 +62,11 @@ async function updateRestaurant(req, res, next) {
 
 async function deleteRestaurant(req, res, next) {
   try {
-    await RestaurantService.deleteRestaurant({restaurantId: req.params.id, user: req.user});
-    return res.status(200).send({message: 'Restaurant deleted successfully'});
+    await RestaurantService.deleteRestaurant({
+      restaurantId: req.params.id,
+      user: req.user,
+    });
+    return res.status(200).send({ message: 'Restaurant deleted successfully' });
   } catch (error) {
     next(error, req, res, next);
   }
