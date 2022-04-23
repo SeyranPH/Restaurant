@@ -54,6 +54,10 @@ const getRestaurantById = async (restaurantId) => {
   if (!result) {
     throw new NotFound('Restaurant not found');
   }
+  result.averageScore = 4.5;
+  console.log(result);
+  result.image = image;
+
   return result;
 };
 

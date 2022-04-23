@@ -10,6 +10,7 @@ router.post('/login', login);
 router.get('/email-confirmation/:token', emailConfirmation);
 router.post('/email-confirmation', isVerified, resendConfirmationEmail);
 router.put('/:id', isVerified, updateUser);
+router.get('/:id', isVerified, getUser);
 router.delete('/:id', [isVerified], deleteAccount);
 
 async function createUser(req, res, next) {
@@ -72,6 +73,28 @@ async function updateUser(req, res, next) {
     const userId = role.toLowerCase() === 'admin' ? data._id : req.user._id;
     const user = await UserService.updateUser(data, userId);
     return res.status(200).send({ user });
+  } catch (error) {
+    next(error, req, res, next);
+  }
+}
+
+async function getUser(req, res, next) {
+  try {
+    const userId = req.params.id;
+    if (
+      req.user.role !== 'admin' &&
+      userId.toString() !== req.user._id.toString()
+    ) {
+      throw new Error('Should be same user');
+    }
+    const user = await UserService.getUser(userId);
+    const sendBackUser = {
+      _id: user._id,
+      name: user.name,
+      email: user.email,
+      role: user.role,
+    };
+    return res.status(200).send({ user: sendBackUser });
   } catch (error) {
     next(error, req, res, next);
   }

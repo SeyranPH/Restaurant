@@ -99,6 +99,14 @@ async function updateUser(data, userId) {
   return user;
 }
 
+async function getUser(userId) {
+  const user = await User.findById(userId);
+  if (!user) {
+    throw new NotFound('user not found');
+  }
+  return user;
+}
+
 async function deleteAccount(userId) {
   console.log('Starting acoount removal');
   const user = await User.findById(userId);
@@ -141,5 +149,6 @@ module.exports = {
   emailConfirmation,
   resendConfirmationEmail,
   updateUser,
+  getUser,
   deleteAccount,
 };

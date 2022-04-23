@@ -9,7 +9,7 @@ async function isAdmin(req, res, next) {
     if (!user) {
       throw new InternalServerError();
     }
-    if (!user.role.toLowerCase() === 'admin') {
+    if (user.role.toLowerCase() !== 'admin') {
       throw new Forbidden('You are not authorized to perform this action');
     }
     next();

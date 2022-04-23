@@ -21,15 +21,12 @@ const ReviewSchema = new mongoose.Schema(
     reply: {
       comment: {
         type: String,
-        required: true,
       },
       createdAt: {
         type: Date,
-        required: true,
       },
       updatedAt: {
         type: Date,
-        required: true,
       },
     },
   },
