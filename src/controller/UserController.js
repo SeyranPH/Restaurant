@@ -58,8 +58,8 @@ async function resendConfirmationEmail(req, res, next) {
 async function login(req, res, next) {
   try {
     const data = req.body;
-    const token = await UserService.login(data);
-    return res.status(200).send({ token });
+    const user = await UserService.login(data);
+    return res.status(200).send(user);
   } catch (error) {
     next(error, req, res, next);
   }

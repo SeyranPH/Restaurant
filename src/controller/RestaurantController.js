@@ -26,8 +26,12 @@ async function createRestaurant(req, res, next) {
 async function getRestaurants(req, res, next) {
   try {
     RestaurantRequestValidator.validateGetRestaurants(req.query);
-    const { limit, skip } = req.query;
-    const restaurantData = await RestaurantService.getRestaurants(limit, skip);
+    const { limit, skip, ownerUserId } = req.query;
+    const restaurantData = await RestaurantService.getRestaurants(
+      limit,
+      skip,
+      ownerUserId
+    );
     return res.json(restaurantData);
   } catch (error) {
     next(error, req, res, next);

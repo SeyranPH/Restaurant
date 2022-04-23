@@ -6,10 +6,10 @@ function validateCreateRestaurant(input) {
     name: Joi.string().required(),
     description: Joi.string().required(),
     location: Joi.string().required(),
-    image: Joi.string()
+    image: Joi.string(),
   });
-  const result = schema.validate(input)
-  if (result.error){
+  const result = schema.validate(input);
+  if (result.error) {
     throw new BadRequest(result.error);
   }
   return;
@@ -18,10 +18,11 @@ function validateCreateRestaurant(input) {
 function validateGetRestaurants(input) {
   const schema = Joi.object({
     limit: Joi.number(),
-    skip: Joi.number()
+    skip: Joi.number(),
+    ownerUserId: Joi.string(),
   });
-  const result = schema.validate(input)
-  if (result.error){
+  const result = schema.validate(input);
+  if (result.error) {
     throw new BadRequest(result.error);
   }
 }
@@ -31,10 +32,10 @@ function validateUpdateRestaurant(input) {
     name: Joi.string(),
     description: Joi.string(),
     location: Joi.string(),
-    image: Joi.string()
+    image: Joi.string(),
   });
-  const result = schema.validate(input)
-  if (result.error){
+  const result = schema.validate(input);
+  if (result.error) {
     throw new BadRequest(result.error);
   }
 }
@@ -42,5 +43,5 @@ function validateUpdateRestaurant(input) {
 module.exports = {
   validateCreateRestaurant,
   validateGetRestaurants,
-  validateUpdateRestaurant
+  validateUpdateRestaurant,
 };

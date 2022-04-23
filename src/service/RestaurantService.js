@@ -10,7 +10,7 @@ const createRestaurant = async (data, userId) => {
   return restaurant._id;
 };
 
-const getRestaurants = async (limit, skip) => {
+const getRestaurants = async (limit, skip, ownerUserId) => {
   const query = [
     {
       $sort: {
@@ -25,6 +25,13 @@ const getRestaurants = async (limit, skip) => {
       },
     },
   ];
+  if (ownerUserId) {
+    query.push({
+      $match: {
+        $expr: { $eq: ['$ownerId', { $toObjectId: ownerUserId }] },
+      },
+    });
+  }
   if (limit) {
     query.push({
       $limit: Number(limit),

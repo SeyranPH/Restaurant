@@ -27,8 +27,14 @@ async function signup(data) {
   data.emailConfirmed = false;
   const user = await User.create(data);
   await sendEmailConfirmation(user);
-  const accessToken = jwt.sign({ id: user.id }, jwtSecret, { expiresIn: '3h' });
-  return { accessToken };
+  const token = jwt.sign({ id: user._id }, jwtSecret, { expiresIn: '3h' });
+  return {
+    token,
+    name: user.name,
+    email: user.email,
+    role: user.role,
+    _id: user._id,
+  };
 }
 
 async function emailConfirmation(token) {
@@ -44,9 +50,13 @@ async function emailConfirmation(token) {
 }
 
 async function sendEmailConfirmation(user) {
-  const newToken = jwt.sign({ id, type: 'email_confirmation' }, jwtSecret, {
-    expiresIn: '3d',
-  });
+  const newToken = jwt.sign(
+    { id: user._id, type: 'email_confirmation' },
+    jwtSecret,
+    {
+      expiresIn: '3d',
+    }
+  );
   await sendEmailConfirmationService({ to: user.email, token: newToken });
   await User.findOneAndUpdate(
     { _id: user._id },
@@ -77,10 +87,15 @@ async function resendConfirmationEmail(user) {
 async function login(data) {
   const user = await User.findOne(data);
   if (!user) throw new Unauthorized('wrong email or password');
-
   const { id } = user;
   const token = jwt.sign({ id }, jwtSecret, { expiresIn: '3h' });
-  return token;
+  return {
+    name: user.name,
+    email: user.email,
+    _id: user._id,
+    role: user.role,
+    token,
+  };
 }
 
 async function updateUser(data, userId) {
