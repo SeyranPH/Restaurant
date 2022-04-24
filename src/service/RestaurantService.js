@@ -62,14 +62,13 @@ const getRestaurantById = async (restaurantId) => {
     throw new NotFound('Restaurant not found');
   }
   result.averageScore = 4.5;
-  console.log(result);
   result.image = image;
 
   return result;
 };
 
 const updateRestaurant = async ({ restaurantId, user, data }) => {
-  if (user.role && user.role.toLowerCase === 'owner') {
+  if (user.role && user.role.toLowerCase() === 'owner') {
     const result = await Restaurant.findOneAndUpdate(
       { _id: restaurantId },
       data,
@@ -91,6 +90,7 @@ const deleteRestaurant = async ({ restaurantId, user }) => {
   if (user.role.toLowerCase() !== 'owner') {
     throw new Forbidden("The user doesn't own restaurant with this id");
   }
+  const session = await startSession();
   try {
     session.startTransaction();
 
