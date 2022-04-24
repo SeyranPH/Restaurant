@@ -28,7 +28,7 @@ const getRestaurants = async (limit, skip, ownerUserId) => {
   if (ownerUserId) {
     query.push({
       $match: {
-        $expr: { $eq: ['$ownerId', { $toObjectId: ownerUserId }] },
+        $expr: { $eq: ['$owner', { $toObjectId: ownerUserId }] },
       },
     });
   }
