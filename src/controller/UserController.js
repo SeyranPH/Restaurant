@@ -11,7 +11,8 @@ router.get('/email-confirmation/:token', emailConfirmation);
 router.post('/email-confirmation', isVerified, resendConfirmationEmail);
 router.put('/:id', isVerified, updateUser);
 router.get('/:id', isVerified, getUser);
-router.delete('/:id', [isVerified], deleteAccount);
+router.get('/', [isVerified, isAdmin], getAllUsers);
+router.delete('/:id', [isVerified, isAdmin], deleteAccount);
 
 async function createUser(req, res, next) {
   try {
@@ -100,10 +101,19 @@ async function getUser(req, res, next) {
   }
 }
 
+async function getAllUsers(req, res, next) {
+  try {
+    const allUsers = await UserService.getAllUsers();
+    return res.status(200).send(allUsers);
+  } catch (error) {
+    next(error, req, res, next);
+  }
+}
+
 async function deleteAccount(req, res, next) {
   try {
     await UserService.deleteAccount(req.params.id.toString());
-    return res.sendStatus(200);
+    return res.status(200).send({ status: 'OK' });
   } catch (error) {
     next(error, req, res, next);
   }

@@ -122,6 +122,20 @@ async function getUser(userId) {
   return user;
 }
 
+async function getAllUsers() {
+  const users = await User.find();
+  const formattedUsers = users.map((user) => ({
+    _id: user._id,
+    name: user.name,
+    email: user.email,
+    role: user.role,
+  }));
+  if (!formattedUsers) {
+    throw new NotFound('users not found');
+  }
+  return formattedUsers;
+}
+
 async function deleteAccount(userId) {
   console.log('Starting acoount removal');
   const user = await User.findById(userId);
@@ -165,5 +179,6 @@ module.exports = {
   resendConfirmationEmail,
   updateUser,
   getUser,
+  getAllUsers,
   deleteAccount,
 };

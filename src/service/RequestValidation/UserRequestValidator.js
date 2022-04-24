@@ -76,7 +76,7 @@ function validateCreateUser(input) {
     password: Joi.string()
       .pattern(new RegExp('^[a-zA-Z0-9]{3,30}$'))
       .required(),
-    role: Joi.string().valid('owner', 'regular').required(),
+    role: Joi.string().valid('owner', 'regular', 'admin').required(),
   });
   const result = schema.validate(input);
   if (result.error) {
