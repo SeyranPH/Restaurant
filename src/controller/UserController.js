@@ -40,7 +40,7 @@ async function emailConfirmation(req, res, next) {
   try {
     const token = req.params.token;
     await UserService.emailConfirmation(token);
-    return res.sendStatus(200);
+    return res.sendStatus(204);
   } catch (error) {
     next(error, req, res, next);
   }
@@ -50,7 +50,7 @@ async function resendConfirmationEmail(req, res, next) {
   try {
     const { user } = req;
     await UserService.resendConfirmationEmail(user);
-    return res.sendStatus(200);
+    return res.sendStatus(204);
   } catch (error) {
     next(error, req, res, next);
   }
@@ -112,8 +112,9 @@ async function getAllUsers(req, res, next) {
 
 async function deleteAccount(req, res, next) {
   try {
+    const userId = req.user.role.toLowerCase() === 'admin' ? req.params.id : req.user._id;
     await UserService.deleteAccount(req.params.id.toString());
-    return res.status(200).send({ status: 'OK' });
+    return res.sendStatus(204);
   } catch (error) {
     next(error, req, res, next);
   }
