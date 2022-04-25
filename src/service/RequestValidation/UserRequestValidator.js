@@ -56,8 +56,7 @@ function validateUpdateUser(input) {
     }),
     role: Joi.string().valid('owner', 'regular'),
     password: Joi.string()
-      .pattern(new RegExp('^[a-zA-Z0-9]{3,30}$'))
-      .required(),
+      .pattern(new RegExp('^[a-zA-Z0-9]{3,30}$')),
     _id: Joi.string(),
   });
   const result = schema.validate(input);

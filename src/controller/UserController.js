@@ -9,10 +9,10 @@ router.post('/signup', signup);
 router.post('/login', login);
 router.get('/email-confirmation/:token', emailConfirmation);
 router.post('/email-confirmation', isVerified, resendConfirmationEmail);
-router.put('/:id', isVerified, updateUser);
 router.get('/:id', isVerified, getUser);
-router.get('/', [isVerified, isAdmin], getAllUsers);
-router.delete('/:id', [isVerified, isAdmin], deleteAccount);
+router.get('/', [isVerified, isAdmin], getUsers);
+router.put('/', isVerified, updateUser);
+router.delete('/', isVerified, deleteAccount);
 
 async function createUser(req, res, next) {
   try {
@@ -71,9 +71,9 @@ async function updateUser(req, res, next) {
     UserRequestValidator.validateUpdateUser(req.body);
     const data = req.body;
     const { role } = req.user;
-    const userId = role.toLowerCase() === 'admin' ? data._id : req.user._id;
+    const userId = req.user.role.toLowerCase() === 'admin' ? req.query.id : req.user._id;
     const user = await UserService.updateUser(data, userId);
-    return res.status(200).send({ user });
+    return res.sendStatus(204);
   } catch (error) {
     next(error, req, res, next);
   }
@@ -82,29 +82,19 @@ async function updateUser(req, res, next) {
 async function getUser(req, res, next) {
   try {
     const userId = req.params.id;
-    if (
-      req.user.role !== 'admin' &&
-      userId.toString() !== req.user._id.toString()
-    ) {
-      throw new Error('Should be same user');
-    }
-    const user = await UserService.getUser(userId);
-    const sendBackUser = {
-      _id: user._id,
-      name: user.name,
-      email: user.email,
-      role: user.role,
-    };
-    return res.status(200).send({ user: sendBackUser });
+    const isAdmin = req.user.role.toLowerCase() === 'admin';
+    const user = await UserService.getUser(userId, isAdmin);
+    return res.status(200).send({ user });
   } catch (error) {
     next(error, req, res, next);
   }
 }
 
-async function getAllUsers(req, res, next) {
+async function getUsers(req, res, next) {
   try {
-    const allUsers = await UserService.getAllUsers();
-    return res.status(200).send(allUsers);
+    const {limit, skip} = req.query;
+    const users = await UserService.getUsers({limit, skip});
+    return res.status(200).send(users);
   } catch (error) {
     next(error, req, res, next);
   }
@@ -112,8 +102,8 @@ async function getAllUsers(req, res, next) {
 
 async function deleteAccount(req, res, next) {
   try {
-    const userId = req.user.role.toLowerCase() === 'admin' ? req.params.id : req.user._id;
-    await UserService.deleteAccount(req.params.id.toString());
+    const userId = req.user.role.toLowerCase() === 'admin' ? req.query.id : req.user._id;
+    await UserService.deleteAccount(userId);
     return res.sendStatus(204);
   } catch (error) {
     next(error, req, res, next);
