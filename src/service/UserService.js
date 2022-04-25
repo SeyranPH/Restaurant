@@ -9,9 +9,7 @@ const {
   Forbidden,
   InternalServerError,
 } = require('../middleware/errorHandler');
-const {
-  sendEmailConfirmation: sendEmailConfirmationService,
-} = require('./MailingService');
+const MailService = require('./MailingService');
 const { jwtSecret } = require('../../config');
 const { startSession } = require('mongoose');
 
@@ -21,6 +19,18 @@ async function createUser(data) {
   });
   const user = await User.create(data);
   return user;
+}
+
+async function sendEmailConfirmation(user) {
+  const newToken = jwt.sign({ id: user._id, type: 'email_confirmation' }, jwtSecret, {
+    expiresIn: '3d',
+  });
+  await MailService.sendEmailConfirmation({ to: user.email, token: newToken });
+  await User.findOneAndUpdate(
+    { _id: user._id },
+    { emailConfirmationToken: newToken, emailConfirmed: false }
+  );
+  return;
 }
 
 async function signup(data) {
@@ -49,32 +59,16 @@ async function emailConfirmation(token) {
   return;
 }
 
-async function sendEmailConfirmation(user) {
-  const newToken = jwt.sign(
-    { id: user._id, type: 'email_confirmation' },
-    jwtSecret,
-    {
-      expiresIn: '3d',
-    }
-  );
-  await sendEmailConfirmationService({ to: user.email, token: newToken });
-  await User.findOneAndUpdate(
-    { _id: user._id },
-    { emailConfirmationToken: newToken, emailConfirmed: false }
-  );
-  return;
-}
-
 async function resendConfirmationEmail(user) {
   const { emailConfirmed } = user;
   if (emailConfirmed) {
     throw new Forbidden('email already confirmed');
   }
   const { emailConfirmationToken } = user;
-  const { exp, iat } = jwt.decode(emailConfirmationToken);
+  const { exp, iat } = jwt.verify(String(emailConfirmationToken), jwtSecret);
   const threeDays = 3 * 24 * 60 * 60;
   if (exp - iat < threeDays) {
-    await sendEmailConfirmationService({
+    await MailService.sendEmailConfirmation({
       to: user.email,
       token: emailConfirmationToken,
     });
@@ -112,28 +106,6 @@ async function updateUser(data, userId) {
   }
   await User.findByIdAndUpdate(userId, data);
   return user;
-}
-
-async function getUser(userId) {
-  const user = await User.findById(userId);
-  if (!user) {
-    throw new NotFound('user not found');
-  }
-  return user;
-}
-
-async function getAllUsers() {
-  const users = await User.find();
-  const formattedUsers = users.map((user) => ({
-    _id: user._id,
-    name: user.name,
-    email: user.email,
-    role: user.role,
-  }));
-  if (!formattedUsers) {
-    throw new NotFound('users not found');
-  }
-  return formattedUsers;
 }
 
 async function deleteAccount(userId) {
@@ -178,7 +150,5 @@ module.exports = {
   emailConfirmation,
   resendConfirmationEmail,
   updateUser,
-  getUser,
-  getAllUsers,
   deleteAccount,
 };

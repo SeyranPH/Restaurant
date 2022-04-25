@@ -20,7 +20,7 @@ async function sendEmailConfirmation({ to, token }) {
     },
     template_id: emailConfirmationTemplateId,
     dynamicTemplateData: {
-      url: `${baseUrl}/email-confirmation/${token}`,
+      url: `${baseUrl}/user/email-confirmation/${token}`,
     },
   };
   const result = await sgMail.send(msg);
