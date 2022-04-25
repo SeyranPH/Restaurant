@@ -51,11 +51,19 @@ async function emailConfirmation(token) {
   const decodedToken = jwt.verify(token, jwtSecret);
   const { id, type } = decodedToken;
   if (type !== 'email_confirmation') throw new Forbidden('invalid token');
-  const user = await User.findOneAndUpdate(
+
+  const user = await User.findOne({
+     _id: id, emailConfirmationToken: token 
+  });
+
+  if (!user) {
+    throw new NotFound('user not found');
+  }
+  
+  await User.findOneAndUpdate(
     { _id: id, emailConfirmationToken: token },
     { emailConfirmed: true, emailConfirmationToken: null }
   );
-  if (!user) throw new NotFound('user not found');
   return;
 }
 
