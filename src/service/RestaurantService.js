@@ -1,13 +1,15 @@
 const { Forbidden, NotFound } = require('../middleware/errorHandler');
+const ImageService = require('./ImageService');
 const Restaurant = require('../model/restaurant');
 const Review = require('../model/Review');
 const { startSession } = require('mongoose');
-const { image } = require('../mockData');
 
-const createRestaurant = async (data, userId) => {
-  const restaurantData = Object.assign(data, { owner: userId });
-  const restaurant = await Restaurant.create(restaurantData);
-  return restaurant._id;
+
+const createRestaurant = async (data, userId, photo) => {
+  const s3Url = await ImageService.uploadImageToS3(photo);
+  const restaurantData = Object.assign(data, { owner: userId, image: s3Url });
+  const {name, description, image, location, _id: id} = await Restaurant.create(restaurantData);
+  return {name, description, image, location, id};
 };
 
 const getRestaurants = async (limit, skip, ownerId) => {

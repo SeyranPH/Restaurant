@@ -27,6 +27,10 @@ const RestaurantSchema = new mongoose.Schema(
       required: true,
       default: '3',
     },
+    image: {
+      type: String,
+      required: false
+    },
     reviews: {
       type: [
         {

@@ -9,6 +9,10 @@ const {
   SENDER_NAME,
   BASE_URL,
   JWT_SECRET,
+  AWS_BUCKET_NAME,
+  AWS_BUCKET_REGION,
+  AWS_ACCESS_KEY_ID,
+  AWS_SECRET_ACCESS_KEY,
 } = process.env;
 
 module.exports = {
@@ -20,4 +24,9 @@ module.exports = {
   senderName: SENDER_NAME,
   baseUrl: BASE_URL,
   jwtSecret: JWT_SECRET,
+  bucketName: AWS_BUCKET_NAME,
+  bucketRegion: AWS_BUCKET_REGION,
+  awsAccessKey: AWS_ACCESS_KEY_ID,
+  awsSecretKey: AWS_SECRET_ACCESS_KEY
 };
+

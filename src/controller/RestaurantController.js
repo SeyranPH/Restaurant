@@ -2,10 +2,11 @@ const router = require('express').Router();
 
 const isVerified = require('../middleware/authorization');
 const isOwner = require('../middleware/isOwner');
+const savePhoto = require('../middleware/savePhoto');
 const RestaurantService = require('../service/RestaurantService');
 const RestaurantRequestValidator = require('../service/RequestValidation/RestaurantRequestValidator');
 
-router.post('/', [isVerified, isOwner], createRestaurant);
+router.post('/', [isVerified, isOwner, savePhoto], createRestaurant);
 router.get('/', getRestaurants);
 router.get('/:id', getRestaurantById);
 router.put('/:id', [isVerified, isOwner], updateRestaurant);
@@ -16,8 +17,9 @@ async function createRestaurant(req, res, next) {
     RestaurantRequestValidator.validateCreateRestaurant(req.body);
     const userId = req.user._id;
     const data = req.body;
-    const restaurantId = await RestaurantService.createRestaurant(data, userId);
-    return res.send({ id: restaurantId });
+    const image = req.file;
+    const restaurant = await RestaurantService.createRestaurant(data, userId, image);
+    return res.send(restaurant);
   } catch (error) {
     next(error, req, res, next);
   }
