@@ -94,8 +94,7 @@ async function getUnrepliedReviews(req, res, next) {
     res.status(200).send({
       reviews,
       message: 'Unreplied reviews retrieved successfully',
-    })
-
+    });
   } catch (error) {
     next(error, req, res, next);
   }

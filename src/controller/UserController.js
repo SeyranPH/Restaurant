@@ -71,7 +71,8 @@ async function updateUser(req, res, next) {
     UserRequestValidator.validateUpdateUser(req.body);
     const data = req.body;
     const { role } = req.user;
-    const userId = req.user.role.toLowerCase() === 'admin' ? req.query.id : req.user._id;
+    const userId =
+      req.user.role.toLowerCase() === 'admin' ? req.query.id : req.user._id;
     const user = await UserService.updateUser(data, userId);
     return res.sendStatus(204);
   } catch (error) {
@@ -92,8 +93,8 @@ async function getUser(req, res, next) {
 
 async function getUsers(req, res, next) {
   try {
-    const {limit, skip} = req.query;
-    const users = await UserService.getUsers({limit, skip});
+    const { limit, skip } = req.query;
+    const users = await UserService.getUsers({ limit, skip });
     return res.status(200).send(users);
   } catch (error) {
     next(error, req, res, next);
@@ -102,7 +103,8 @@ async function getUsers(req, res, next) {
 
 async function deleteAccount(req, res, next) {
   try {
-    const userId = req.user.role.toLowerCase() === 'admin' ? req.query.id : req.user._id;
+    const userId =
+      req.user.role.toLowerCase() === 'admin' ? req.query.id : req.user._id;
     await UserService.deleteAccount(userId);
     return res.sendStatus(204);
   } catch (error) {

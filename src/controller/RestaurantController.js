@@ -18,7 +18,11 @@ async function createRestaurant(req, res, next) {
     const userId = req.user._id;
     const data = req.body;
     const image = req.file;
-    const restaurant = await RestaurantService.createRestaurant(data, userId, image);
+    const restaurant = await RestaurantService.createRestaurant(
+      data,
+      userId,
+      image
+    );
     return res.send(restaurant);
   } catch (error) {
     next(error, req, res, next);

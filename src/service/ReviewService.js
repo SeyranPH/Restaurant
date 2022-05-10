@@ -156,16 +156,16 @@ async function getUnrepliedReviews(userId) {
     },
     {
       $match: {
-        "restaurant.owner": userId,
-        "review.comment": { $exists: false },
+        'restaurant.owner': userId,
+        'review.comment': { $exists: false },
       },
     },
     {
       $addFields: {
-        restaurantId: { 
-          $arrayElemAt: ['$restaurant._id', 0] 
-        }
-      }
+        restaurantId: {
+          $arrayElemAt: ['$restaurant._id', 0],
+        },
+      },
     },
     {
       $project: {
@@ -173,10 +173,10 @@ async function getUnrepliedReviews(userId) {
         comment: 1,
         score: 1,
         reviewer: 1,
-        restaurantId: 1
-      }
-    }
-  ])
+        restaurantId: 1,
+      },
+    },
+  ]);
   return reviews;
 }
 
@@ -187,5 +187,5 @@ module.exports = {
   createReply,
   updateReply,
   deleteReply,
-  getUnrepliedReviews
+  getUnrepliedReviews,
 };

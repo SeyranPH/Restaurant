@@ -16,9 +16,13 @@ const { startSession } = require('mongoose');
 
 // A helper function to send confirmation email
 async function sendEmailConfirmation(user) {
-  const newToken = jwt.sign({ id: user._id, type: 'email_confirmation' }, jwtSecret, {
-    expiresIn: '3d',
-  });
+  const newToken = jwt.sign(
+    { id: user._id, type: 'email_confirmation' },
+    jwtSecret,
+    {
+      expiresIn: '3d',
+    }
+  );
   await MailService.sendEmailConfirmation({ to: user.email, token: newToken });
   await User.findOneAndUpdate(
     { _id: user._id },
@@ -55,7 +59,8 @@ async function emailConfirmation(token) {
   if (type !== 'email_confirmation') throw new Forbidden('invalid token');
 
   const user = await User.findOne({
-     _id: id, emailConfirmationToken: token 
+    _id: id,
+    emailConfirmationToken: token,
   });
 
   if (!user) {
@@ -113,14 +118,19 @@ async function getUser(userId, isAdmin) {
     }
     return user;
   }
-  const user = await User.findById(userId).select(['_id', 'name', 'email', 'role']);
+  const user = await User.findById(userId).select([
+    '_id',
+    'name',
+    'email',
+    'role',
+  ]);
   if (!user) {
     throw new NotFound('User not found');
   }
   return user;
 }
 
-async function getUsers({limit, skip}) {
+async function getUsers({ limit, skip }) {
   const users = await User.find({}, null, {
     limit,
     skip,
