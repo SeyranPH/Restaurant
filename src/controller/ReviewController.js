@@ -11,6 +11,7 @@ router.delete('/:id', [isVerified], deleteReview);
 router.post('/:id/reply', [isVerified, isOwner], createReply);
 router.put('/:id/reply', [isVerified, isOwner], updateReply);
 router.delete('/:id/reply/:id', [isVerified, isOwner], deleteReply);
+router.get('/unreplied', [isVerified, isOwner], getUnrepliedReviews);
 
 async function createReview(req, res, next) {
   try {
@@ -81,6 +82,20 @@ async function deleteReply(req, res, next) {
     return res
       .status(200)
       .send({ message: 'Review reply deleted successfully' });
+  } catch (error) {
+    next(error, req, res, next);
+  }
+}
+
+async function getUnrepliedReviews(req, res, next) {
+  try {
+    const userId = req.user._id;
+    const reviews = await ReviewService.getUnrepliedReviews(userId);
+    res.status(200).send({
+      reviews,
+      message: 'Unreplied reviews retrieved successfully',
+    })
+
   } catch (error) {
     next(error, req, res, next);
   }

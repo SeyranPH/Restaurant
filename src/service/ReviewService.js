@@ -140,6 +140,46 @@ async function deleteReply(reviewId, userId) {
   return;
 }
 
+async function getUnrepliedReviews(userId) {
+  const user = await User.findById(userId);
+  if (!user) {
+    throw new NotFound('User not found');
+  }
+  const reviews = await Review.aggregate([
+    {
+      $lookup: {
+        from: 'restaurants',
+        localField: 'restaurant',
+        foreignField: '_id',
+        as: 'restaurant',
+      },
+    },
+    {
+      $match: {
+        "restaurant.owner": userId,
+        "review.comment": { $exists: false },
+      },
+    },
+    {
+      $addFields: {
+        restaurantId: { 
+          $arrayElemAt: ['$restaurant._id', 0] 
+        }
+      }
+    },
+    {
+      $project: {
+        _id: 1,
+        comment: 1,
+        score: 1,
+        reviewer: 1,
+        restaurantId: 1
+      }
+    }
+  ])
+  return reviews;
+}
+
 module.exports = {
   createReview,
   updateReview,
@@ -147,4 +187,5 @@ module.exports = {
   createReply,
   updateReply,
   deleteReply,
+  getUnrepliedReviews
 };
