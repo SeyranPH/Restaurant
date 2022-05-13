@@ -2,7 +2,7 @@ const jwt = require('jsonwebtoken');
 
 const User = require('../model/user');
 const Restaurant = require('../model/restaurant');
-const Review = require('../model/Review');
+const Review = require('../model/review');
 const {
   NotFound,
   Unauthorized,

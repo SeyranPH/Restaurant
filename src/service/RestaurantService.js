@@ -1,7 +1,7 @@
 const { Forbidden, NotFound } = require('../middleware/errorHandler');
 const ImageService = require('./ImageService');
 const Restaurant = require('../model/restaurant');
-const Review = require('../model/Review');
+const Review = require('../model/review');
 const { startSession } = require('mongoose');
 
 const createRestaurant = async (data, userId, photo) => {
