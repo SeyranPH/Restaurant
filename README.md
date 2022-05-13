@@ -1,6 +1,10 @@
 ## Description
 
-Restaurant app
+Restaurant app, designed for adding restaurant and reviewing them.
+
+Requirements: 
+    Node v16+
+    npm v8+
 
 ## Installation
 
@@ -11,5 +15,4 @@ $ npm install
 ## Running the app
 
 ```bash
-# development
 $ npm run start
