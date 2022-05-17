@@ -1,5 +1,5 @@
 const jwt = require('jsonwebtoken');
-
+const bcrypt = require('bcrypt');
 const User = require('../model/user');
 const Restaurant = require('../model/restaurant');
 const Review = require('../model/review');
@@ -41,6 +41,9 @@ async function createUser(data) {
 
 async function signup(data) {
   data.emailConfirmed = false;
+  const passwordHash = await bcrypt.hash(data.password, 5);
+  data.password = passwordHash;
+
   const user = await User.create(data);
   await sendEmailConfirmation(user);
   const token = jwt.sign({ id: user._id }, jwtSecret, { expiresIn: '3h' });
@@ -93,9 +96,14 @@ async function resendConfirmationEmail(user) {
   return;
 }
 
-async function login(data) {
-  const user = await User.findOne(data);
+async function login(email, password) {
+  console.log(email);
+  const user = await User.findOne({email});
   if (!user) throw new Unauthorized('wrong email or password');
+  const isPassowordVerified = await bcrypt.compare(password, user.password);
+  if (!isPassowordVerified) {
+    throw new Unauthorized('wrong email or password');
+  }
   const { id } = user;
   const token = jwt.sign({ id }, jwtSecret, { expiresIn: '3h' });
   return {
