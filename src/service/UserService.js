@@ -52,6 +52,7 @@ async function signup(data) {
     name: user.name,
     email: user.email,
     role: user.role,
+    emailConfirmed: user.emailConfirmed,
     _id: user._id,
   };
 }
@@ -111,6 +112,7 @@ async function login(email, password) {
     email: user.email,
     _id: user._id,
     role: user.role,
+    emailConfirmed: user.emailConfirmed,
     token,
   };
 }
