@@ -1,0 +1,11 @@
+cff-version: 1.2.0
+message: "If you use this software, please cite it as below."
+authors:
+- family-names: "Petrosyan"
+  given-names: "Seyran"
+- family-names: "Edgar"
+  given-names: "Khanzadyan"
+title: "Restaurant Review App"
+version: 1.0.0
+date-released: 2022-05-22
+url: "https://github.com/SeyranPH/Restaurant"
