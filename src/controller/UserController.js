@@ -40,7 +40,7 @@ async function emailConfirmation(req, res, next) {
   try {
     const token = req.params.token;
     await UserService.emailConfirmation(token);
-    return res.sendStatus(204);
+    return res.status(204).send({message: 'Email successfully confirmed'});
   } catch (error) {
     next(error, req, res, next);
   }
