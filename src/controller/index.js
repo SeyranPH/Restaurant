@@ -11,4 +11,5 @@ router.get('/', getRoot)
 async function getRoot(req, res) {
     return res.send('Welcome to the Restaurant Review Project!');
 }
+
 module.exports = router;

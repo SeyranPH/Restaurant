@@ -10,7 +10,7 @@ router.put('/:id', [isVerified], updateReview);
 router.delete('/:id', [isVerified], deleteReview);
 router.post('/:id/reply', [isVerified, isOwner], createReply);
 router.put('/:id/reply', [isVerified, isOwner], updateReply);
-router.delete('/:id/reply/:id', [isVerified, isOwner], deleteReply);
+router.delete('/:id/reply', [isVerified, isOwner], deleteReply);
 router.get('/unreplied', [isVerified, isOwner], getUnrepliedReviews);
 
 async function createReview(req, res, next) {

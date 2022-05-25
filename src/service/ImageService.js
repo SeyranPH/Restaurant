@@ -14,13 +14,18 @@ const s3 = new S3({
 });
 
 async function uploadImageToS3(file) {
-  const fileStream = fs.createReadStream(file.path);
+  const fileStream = fs.createReadStream('../../tmp/uploads/image');
   const params = {
     Bucket: bucketName,
-    Key: file.originalname,
+    Key: Math.random().toString(36).substring(2, 15),
     Body: fileStream,
   };
   const result = await s3.upload(params).promise();
+  fs.unlink('../../tmp/uploads/image', (err) => {
+    if (err) {
+      console.log(err);
+    }
+  });
   return result.Location;
 }
 

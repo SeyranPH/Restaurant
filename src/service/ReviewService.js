@@ -89,19 +89,15 @@ async function createReply(reviewId, userId, { comment }) {
     throw new NotFound('Review not found');
   }
 
-  if (review.reviewer.toString() !== userId.toString()) {
-    throw new Forbidden('You are not allowed to reply your own review');
-  }
-
   const restaurant = await Restaurant.findById(review.restaurant);
-  if (restaurant.owner.toString() === userId.toString()) {
+  if (restaurant.owner.toString() !== userId.toString()) {
     throw new Forbidden('Only restaurant owner can reply to its reviews');
   }
 
   const result = await Review.findByIdAndUpdate(
     { _id: reviewId },
     {
-      review: { comment, createdAt: new Date.now(), updatedAt: new Date.now() },
+      reply: { comment, createdAt: new Date(), updatedAt: new Date() },
     },
     { new: true }
   );
@@ -120,7 +116,7 @@ async function updateReply(reviewId, userId, { comment }) {
 
   const result = await Review.findByIdAndUpdate(
     { _id: reviewId },
-    { review: { comment, updatedAt: new Date.now() } },
+    { reply: { comment, updatedAt: new Date() } },
     { new: true }
   );
   return result;
@@ -132,11 +128,7 @@ async function deleteReply(reviewId, userId) {
     throw new NotFound('Review not found');
   }
 
-  if (review.reviewer.toString() !== userId.toString()) {
-    throw new Forbidden('You are not allowed to delete this review');
-  }
-
-  await Review.findOneAndDelete({ _id: reviewId });
+  await Review.findByIdAndUpdate(reviewId, { reply: null });
   return;
 }
 
@@ -157,7 +149,15 @@ async function getUnrepliedReviews(userId) {
     {
       $match: {
         'restaurant.owner': userId,
-        'review.comment': { $exists: false },
+        'reply': { $exists: false },
+      },
+    },
+    {
+      $lookup: {
+        from: 'users',
+        localField: 'reviewer',
+        foreignField: '_id',
+        as: 'reviewerObject',
       },
     },
     {
@@ -165,6 +165,12 @@ async function getUnrepliedReviews(userId) {
         restaurantId: {
           $arrayElemAt: ['$restaurant._id', 0],
         },
+        restaurantName: {
+          $arrayElemAt: ['$restaurant.name', 0],
+        },
+        reviewerName: {
+          $arrayElemAt: ['$reviewerObject.name', 0],
+        }
       },
     },
     {
@@ -174,6 +180,8 @@ async function getUnrepliedReviews(userId) {
         score: 1,
         reviewer: 1,
         restaurantId: 1,
+        restaurantName: 1,
+        reviewerName: 1
       },
     },
   ]);

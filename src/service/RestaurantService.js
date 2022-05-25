@@ -53,12 +53,7 @@ const getRestaurants = async (limit, skip, ownerId) => {
   if (!result) {
     throw new NotFound('Restaurants not found');
   }
-  const resultAdditionalData = result.map((result) => ({
-    ...result,
-    averageScore: 4.5,
-    image,
-  }));
-  return resultAdditionalData;
+  return result;
 };
 
 const getRestaurantById = async (restaurantId) => {
@@ -68,8 +63,6 @@ const getRestaurantById = async (restaurantId) => {
   if (!result) {
     throw new NotFound('Restaurant not found');
   }
-  result.averageScore = 4.5;
-  result.image = image;
 
   return result;
 };

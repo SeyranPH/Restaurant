@@ -6,7 +6,6 @@ function validateCreateRestaurant(input) {
     name: Joi.string().required(),
     description: Joi.string().required(),
     location: Joi.string().required(),
-    image: Joi.string(),
   });
   const result = schema.validate(input);
   if (result.error) {
@@ -19,7 +18,6 @@ function validateGetRestaurants(input) {
   const schema = Joi.object({
     limit: Joi.number(),
     skip: Joi.number(),
-    ownerUserId: Joi.string(),
   });
   const result = schema.validate(input);
   if (result.error) {

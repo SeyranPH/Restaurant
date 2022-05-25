@@ -6,8 +6,8 @@ const savePhoto = require('../middleware/savePhoto');
 const RestaurantService = require('../service/RestaurantService');
 const RestaurantRequestValidator = require('../service/RequestValidation/RestaurantRequestValidator');
 
-router.post('/', [isVerified, isOwner, savePhoto], createRestaurant);
-router.get('/', getRestaurants);
+router.post('/', [savePhoto, isVerified, isOwner], createRestaurant);
+router.get('/', [isVerified], getRestaurants);
 router.get('/:id', getRestaurantById);
 router.put('/:id', [isVerified, isOwner], updateRestaurant);
 router.delete('/:id', [isVerified, isOwner], deleteRestaurant);
@@ -32,7 +32,8 @@ async function createRestaurant(req, res, next) {
 async function getRestaurants(req, res, next) {
   try {
     RestaurantRequestValidator.validateGetRestaurants(req.query);
-    const { limit, skip, ownerUserId } = req.query;
+    const { limit, skip } = req.query;
+    const ownerUserId = req.user.role === 'owner' ? req.user._id : null;
     const restaurantData = await RestaurantService.getRestaurants(
       limit,
       skip,
